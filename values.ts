@@ -57,9 +57,9 @@ export interface ArrayValue extends RuntimeValue {
 }
 
 export type FunctionCall = (
-	args: RuntimeValue[],
-	env: Environment
-) => RuntimeValue;
+    args: RuntimeValue[],
+    env: Environment,
+) => RuntimeValue // makes it asynchronous for some reason (frick you typescript)
 export interface NativeFunctionValue extends RuntimeValue {
 	type: "native-function";
 	call: FunctionCall;

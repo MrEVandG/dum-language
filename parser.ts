@@ -591,7 +591,7 @@ export default class Parser {
 				const value = this.parse_expression();
 				this.expect(
 					TokenType.CloseParen,
-					"you need to close your parenthesis!1!1 😿"
+					"you need to close your parenthesis!1!1"
 				);
 				return value;
 			}

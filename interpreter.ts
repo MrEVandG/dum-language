@@ -70,7 +70,7 @@ function evaluate_numeric_binary_expression(
 		case "<=":
 			return make_boolean(left.value <= right.value);
 		default:
-			throw `interpreter: owo got binary operator with improper operation, got:${operator}`;
+			throw `interpreter: got binary operator with improper operation, got:${operator}`;
 	}
 }
 
