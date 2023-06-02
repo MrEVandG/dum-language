@@ -162,6 +162,30 @@ function evaluate_call_expression(
 	throw `${fn.type} is not a function`;
 }
 
+// https://stackoverflow.com/questions/35948335/how-can-i-check-if-two-map-objects-are-equal
+function compareObjectValues(
+	map1: Map<string, RuntimeValue>,
+	map2: Map<string, RuntimeValue>
+): boolean {
+	let obj2Val;
+	let result = true;
+	if (map1.size !== map2.size) {
+		return false;
+	}
+	map1.forEach((value, key) => {
+		obj2Val = map2.get(key);
+		// in cases of an undefined value, make sure the key
+		// actually exists on the object so there are no false positives
+		if (obj2Val !== value) {
+			result = false;
+		}
+		if (!map2.has(key)) {
+			result = false;
+		}
+	});
+	return result;
+}
+
 function evaluate_binary_expression(
 	binExpr: BinaryExpression,
 	env: Environment
@@ -171,10 +195,74 @@ function evaluate_binary_expression(
 	const operator = binExpr.operator;
 	if (operator == "==") {
 		// compare using equality
-		if (left.type !== right.type) {
-			throw "you can't compare 2 objects of different types. convert one/both or compare different parts.";
+		if (left.type == "object") {
+			if (right.type == "object") {
+				return make_boolean(
+					compareObjectValues(
+						structuredClone((left as ObjectValue).properties),
+						structuredClone((right as ObjectValue).properties)
+					)
+				);
+			}
+			return make_boolean(false);
 		}
-		return make_boolean(left == right);
+		if (left.type == "array") {
+			if (right.type == "array")
+				return make_boolean(
+					(left as ArrayValue).elements ===
+						(right as ArrayValue).elements
+				);
+			return make_boolean(false);
+		}
+		if (left.type == "function") {
+			if (right.type == "function")
+				return make_boolean(
+					(left as FunctionValue).body ==
+						(right as FunctionValue).body
+				);
+			return make_boolean(false);
+		}
+		if (left.type == "native-function" || right.type == "native-function") {
+			throw "cannot compare values to native functions, i just wont let you.";
+		}
+		return make_boolean(left.value === right.value); // i tested every case where the runtimevalue does not have "value". These 2 properties will definitely have values.
+	} else if (operator == "!=") {
+		if (left.type == "object") {
+			if (right.type == "object") {
+				return make_boolean(
+					!compareObjectValues(
+						structuredClone((left as ObjectValue).properties),
+						structuredClone((right as ObjectValue).properties)
+					)
+				);
+			}
+			return make_boolean(true);
+		}
+		if (left.type == "array") {
+			if (right.type == "array")
+				return make_boolean(
+					(left as ArrayValue).elements !==
+						(right as ArrayValue).elements
+				);
+			return make_boolean(true);
+		}
+		if (left.type == "function") {
+			if (right.type == "function")
+				return make_boolean(
+					(left as FunctionValue).body !==
+						(right as FunctionValue).body
+				);
+			return make_boolean(true);
+		}
+		if (left.type == "native-function" || right.type == "native-function") {
+			throw "cannot compare values to native functions, i just wont let you.";
+		}
+		return make_boolean(left.value !== right.value);
+	} else if (operator == "??") {
+		if (left.type == "null") {
+			return right;
+		} // nullish coalesce operator. One side null, use the other.
+		return left;
 	}
 	if (left.type == "number" && right.type == "number") {
 		return evaluate_numeric_binary_expression(

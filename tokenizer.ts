@@ -3,7 +3,9 @@ export enum TokenType {
     Number,
     Identifier,
     String,
-    // symbols
+    // symbols/characters
+    ExlamationMark,
+    QuestionMark,
     Equals,
     OpenParen, // (
     CloseParen, // )
@@ -89,6 +91,22 @@ export function tokenize(sourceCode:string,debugMode:boolean):Token[] {
             tokens.push(token(src.shift(),TokenType.Colon))
         } else if (src[0]==",") {
             tokens.push(token(src.shift(),TokenType.Comma))
+        } else if (src[0]=="?") {
+            if (src[1]=="?") {
+                src.shift() // remove first question mark
+                src.shift() // remove second question mark
+                tokens.push(token("??",TokenType.BinaryOperator)) // Nullish Coalescing operator (google it)
+            } else {
+                tokens.push(token(src.shift(),TokenType.QuestionMark))
+            }
+        } else if (src[0]=="!") {
+            if (src[1]=="=") {
+                src.shift()
+                src.shift()
+                tokens.push(token("!=",TokenType.BinaryOperator)) // Not Equal To operator
+            } else {
+                tokens.push(token("!",TokenType.ExlamationMark)) // inverts boolean values. (bonus: using !! will translate your value to boolean directly)
+            }
         } else if (src[0]==".") {
             tokens.push(token(src.shift(),TokenType.Period))
         } else if (">=<=".includes(src[0])) {
@@ -105,14 +123,15 @@ export function tokenize(sourceCode:string,debugMode:boolean):Token[] {
             // quotation mark! woohoo
             let string = ""
             src.shift() // remove the quote
-            while (src.length>0&&src[0]!='"') {
+            while (src.length>0&&src[0]!=='"') {
                 string += src.shift()
             }
-            if (src.shift()!='"') {
+            if (src[0]!=='"') {
                 // They never closed the quote!
                 // Let's error to let them know.
-                throw ("oh no! an error! you forgot to close a quotation mark, and now i don't know when to stop 😔")
+                throw ("oh no! an error! you forgot to close a quotation mark, and now i don't know when to stop")
             }
+            src.shift() // remove the quote
             tokens.push(token(string,TokenType.String))
         } else if (isalpha(src[0])) {
             let str = ""

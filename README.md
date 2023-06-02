@@ -12,7 +12,7 @@ Users can:
 - Use native functions
 - Use, call, and create objects(dictionaries) and arrays(lists)
 - do basic arithmetic (+, -, *, /, %)
-- Run all of the above in while and for loops
+- Run all of the above in while loops, for loops, and if statements
 - And probably more on the way.
 
-If for whatever reason you download this repository and use for it any practical reason, may I have mercy on you.
+If for whatever reason you download this repository and use for it any practical reason, may god have mercy on you.

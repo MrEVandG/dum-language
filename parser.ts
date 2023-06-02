@@ -444,7 +444,7 @@ export default class Parser {
 
 	private parse_equality(): Expression {
 		let left = this.parse_additive_expression();
-		while (["==", "<=", "<", ">", ">="].includes(this.at().value)) {
+		while (["==", "<=", "<", ">", ">=","!="].includes(this.at().value)) {
 			const operator = this.eat().value;
 			const right = this.parse_additive_expression();
 			left = {
