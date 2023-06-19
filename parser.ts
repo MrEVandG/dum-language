@@ -185,10 +185,11 @@ export default class Parser {
 		return make_null_literal(); // This will never be reached, but i need to make the typescript compiler shut up.
 	}
 	private parse_return_statement(): Statement {
-		this.eat(); // eat the return keyword
+		this.eat(); // eat the `return` keyword
 		if (
 			this.at().type == TokenType.CloseBrace ||
-			this.at().type == TokenType.Semicolon
+			this.at().type == TokenType.Semicolon ||
+            this.at().type == TokenType.EndOfFile
 		) {
 			return {
 				kind: "ReturnStatement",
@@ -198,8 +199,8 @@ export default class Parser {
 		return {
 			kind: "ReturnStatement",
 			value: this.parse_object_expression(),
-		} as ReturnStatement; // what do I return? this thing. also, how is an assignment an expression?
-	}
+		} as ReturnStatement; // what do I return? this thing.
+    }
 	private parse_expression(): Expression {
 		if (this.at().type == TokenType.Function)
 			return this.parse_function_declaration();

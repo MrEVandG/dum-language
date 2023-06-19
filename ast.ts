@@ -3,21 +3,21 @@
 export type NodeType =
 	| "Program"
 	// Literals
+	| "Identifier"
 	| "NumericLiteral"
 	| "NullLiteral"
 	| "StringLiteral"
+	| "ObjectLiteral"
+	| "ArrayLiteral"
 	| "ForLoopCondition"
 	| "Property"
-	| "ObjectLiteral"
-	| "Identifier"
-	| "ArrayLiteral"
-	// Expressions and Statements
+	// Statements
 	| "IfStatement"
 	| "ForLoopStatement"
 	| "WhileLoopStatement"
     | "BreakStatement"
 	| "ReturnStatement"
-    
+    // Expressions
 	| "MemberExpression"
 	| "ReassignmentExpression"
 	| "VariableDeclaration"
@@ -35,7 +35,7 @@ export interface Program extends Statement {
 	body: Statement[];
 }
 
-export interface Expression extends Statement {}
+export interface Expression extends Statement {} // expands the tree for seperations of statements/expressions
 
 export interface BinaryExpression extends Expression {
 	kind: "BinaryExpression";

@@ -1,6 +1,6 @@
 # dum-language
 
-considering how I followed a [tutorial](https://youtube.com/@tylerlaceby) for a head-start, you should watch some of the tutorials to understand. or you're a giga-nerd who understands this stuff.
+considering how I followed a [tutorial](https://youtube.com/@tylerlaceby) for a head-start, you should watch some of the tutorials to understand. or you're a giga-nerd who intuitively gets this stuff.
 
 ## what does it do
 
@@ -11,7 +11,11 @@ Users can:
 - Declare custom functions
 - Use native functions
 - Use, call, and create objects(dictionaries) and arrays(lists)
-- do basic arithmetic (+, -, *, /, %)
+- Do basic arithmetic (+, -, *, /, %)
+- Use global functions and objects like `Object`, `evalFile`, `eval`, `readFile`, `print`, etc
+- Compare 2 values using ==, !=, <, >, <=, >=
+- Get elements of arrays using brackets
+- Compute object properties using brackets
 - Run all of the above in while loops, for loops, and if statements
 - And probably more on the way.
 

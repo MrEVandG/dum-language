@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { NullLiteral, Statement } from "./ast.ts";
 import Environment from "./environment.ts";
 // "Primitive" Types
@@ -9,21 +10,10 @@ export type ValueType =
 	| "object"
 	| "array"
 	| "function"
-	| "break"
-	| "return"
 	| "native-function";
 
 export interface RuntimeValue {
 	type: ValueType;
-}
-
-export interface ReturnValue extends RuntimeValue {
-	type: "return";
-	value?: RuntimeValue;
-}
-
-export interface BreakValue extends RuntimeValue {
-	type: "break";
 }
 
 export interface NullValue extends RuntimeValue {
@@ -58,7 +48,8 @@ export interface ArrayValue extends RuntimeValue {
 
 export type FunctionCall = (
 	args: RuntimeValue[],
-	env: Environment
+	env: Environment,
+    strictMode: boolean
 ) => RuntimeValue; // makes it asynchronous for some reason (frick you typescript)
 export interface NativeFunctionValue extends RuntimeValue {
 	type: "native-function";
@@ -96,7 +87,7 @@ export function make_boolean(value: boolean): BooleanValue {
 	return { type: "boolean", value } as BooleanValue;
 }
 
-export function convert_to_object(value: ObjectValue) {
+export function convert_to_object(value: ObjectValue):Object {
     const result = {}
     value.properties.forEach((value, key)=>{
         Object.assign(result,{[key]:convert_to_native(value)})
@@ -104,31 +95,30 @@ export function convert_to_object(value: ObjectValue) {
     return result
 }
 
-export function convert_to_array(value: ArrayValue) {
-    const result = []
-    value.elements.forEach(value=>{
-        result.push(convert_to_native(value))
-    })
+export function convert_to_array(value: ArrayValue):Array<any> {
+    const elements: any[] = []
+    value.elements.forEach(value=>elements.push(convert_to_native(value)))
+    return elements
 }
 
 export function convert_to_native(value: RuntimeValue) {
         switch (value.type) {
             case "array":
-                return (convert_to_array(value as ArrayValue))
+                return convert_to_array(value as ArrayValue)
             case "object":
-                return (convert_to_object(value as ObjectValue))
+                return convert_to_object(value as ObjectValue)
             case "boolean":
-                return ((value as BooleanValue).value)
+                return (value as BooleanValue).value
             case "function":
-                return ((value as FunctionValue).name??"anonymous function")
+                return `${(value as FunctionValue).name??""}`
             case "native-function":
-                return ("native function")
+                return "native function code"
             case "null":
-                return (null)
+                return null
             case "number":
-                return ((value as NumberValue).value)
+                return value
             case "string":
-                return (`"${(value as StringValue).value}"`)
+                return `"${(value as StringValue).value}"`
         }
 }
 
@@ -150,11 +140,6 @@ export function convert_to_boolean(value: RuntimeValue) {
             return (value as ObjectValue).properties.size>0
         case "string":
             return (value as StringValue).value!==""
-        case "break":
-            // This should never be evaluated, so lets error.
-            throw "how do you convert the keyword break into a boolean?"
-        case "return":
-            throw "how do you convert the keyword return into a boolean?"
         default:
             return false // until more values are created and added
     }
