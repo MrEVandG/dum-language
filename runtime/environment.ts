@@ -1,5 +1,5 @@
 import { evaluate } from "./interpreter.ts";
-import Parser from "./parser.ts";
+import Parser from "../compile/parser.ts";
 import {
 	ArrayValue,
 	ObjectValue,
@@ -27,6 +27,10 @@ export default class Environment {
 		parser: Parser,
 		DEBUG_MODE: boolean
 	): Environment {
+		if (DEBUG_MODE) {
+			console.log("declaring global environment variables");
+			console.time("setupEnvironment");
+		}
 		this.declareVariable("true", make_boolean(true), true, true);
 		this.declareVariable("false", make_boolean(false), true, true);
 		this.declareVariable("null", make_null(), true, true);
@@ -108,7 +112,7 @@ export default class Environment {
 					if (args[0].type !== "string") {
 						throw "i cant find a path to a file that isnt a string";
 					}
-                    
+
 					const data = Deno.readTextFileSync(
 						(args[0] as StringValue).value
 					);
@@ -297,12 +301,15 @@ export default class Environment {
 			"DUM",
 			{
 				type: "object",
-				properties: new Map<string, RuntimeValue>()
+				properties: new Map<string, RuntimeValue>(),
 			} as ObjectValue,
 			true,
 			true
 		);
-
+		if (DEBUG_MODE) {
+			console.timeEnd("setupEnvironment");
+			console.log("Environment done setting up");
+		}
 		return this;
 	}
 
@@ -330,7 +337,7 @@ export default class Environment {
 		return value;
 	}
 
-	public findVariable(name: string): Environment {
+	public findVariable(name: string, ): Environment {
 		if (this.variables.has(name)) {
 			return this;
 		}

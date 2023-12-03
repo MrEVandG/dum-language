@@ -1,7 +1,6 @@
 import {
 	RuntimeValue,
 	NumberValue,
-	NullValue,
 	StringValue,
 	make_null,
 	make_number,
@@ -33,7 +32,7 @@ import {
 	StringLiteral,
 	VariableDeclaration,
 	WhileLoopStatement,
-} from "./ast.ts";
+} from "../compile/ast.ts";
 import Environment from "./environment.ts";
 
 function evaluate_numeric_binary_expression(

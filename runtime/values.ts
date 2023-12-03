@@ -1,5 +1,5 @@
 // deno-lint-ignore-file
-import { NullLiteral, Statement } from "./ast.ts";
+import { NullLiteral, Statement } from "../compile/ast.ts";
 import Environment from "./environment.ts";
 // "Primitive" Types
 export type ValueType =
@@ -10,6 +10,9 @@ export type ValueType =
 	| "object"
 	| "array"
 	| "function"
+    | "method"
+    | "class"
+    | "class-property"
 	| "native-function";
 
 export interface RuntimeValue {
@@ -39,6 +42,13 @@ export interface BooleanValue extends RuntimeValue {
 export interface ObjectValue extends RuntimeValue {
 	type: "object";
 	properties: Map<string, RuntimeValue>;
+}
+
+export interface ClassValue extends RuntimeValue {
+    type: "class",
+    superClass: ClassValue; // ¯\_(ツ)_/¯
+    properties: Map<string, RuntimeValue>,
+    privateProperties: Set<string> // Define which properties/methods are private; all others are public.
 }
 
 export interface ArrayValue extends RuntimeValue {
@@ -116,7 +126,7 @@ export function convert_to_native(value: RuntimeValue) {
             case "null":
                 return null
             case "number":
-                return value
+                return (value as NumberValue).value
             case "string":
                 return `"${(value as StringValue).value}"`
         }
@@ -129,7 +139,7 @@ export function convert_to_boolean(value: RuntimeValue) {
         case "array":
             return (value as ArrayValue).elements.length>0
         case "function":
-            return (value as FunctionValue).body.length>0 // return if function is empty (never)
+            return (value as FunctionValue).body.length>0 // return if function is empty (hopefully never)
         case "native-function":
             return true // every native function does *something*
         case "null":

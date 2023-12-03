@@ -1,0 +1,25 @@
+{
+  "name": "dum",
+  "displayName": "DUM Syntax Highlighting",
+  "description": "Syntax highlights for files ending with .dum or .dumb.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "dumb",
+      "aliases": ["DUM", "dumb"],
+      "extensions": [".dum",".dumb"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "dumb",
+      "scopeName": "source.dum",
+      "path": "./syntaxes/dumb.tmLanguage.json"
+    }]
+  }
+}

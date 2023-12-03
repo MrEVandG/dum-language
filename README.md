@@ -4,6 +4,8 @@ considering how I followed a [tutorial](https://youtube.com/@tylerlaceby) for a 
 
 ## what does it do
 
+Full list with exlpanations and examples can be found in the [documentation](./DOCUMENTATION.md).
+
 Users can:
 
 - Declare custom variables

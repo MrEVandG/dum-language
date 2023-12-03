@@ -1,1 +1,7 @@
-DUM.exports = 1/2
+function abc() {
+    print("can i put my balls in yo jaws?!?!?")
+}
+
+for (let i = 0; i < 10; i++) {
+    abc()
+}
